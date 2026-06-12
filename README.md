@@ -1,7 +1,10 @@
-# amalshaji.dev — personal website
+# amalshaji.in — personal website
 
-Single-page personal site for Amal Shaji — Senior Software Engineer (AWS Bedrock),
-multi-agent systems & RAG. Built as plain HTML/CSS/JS: no build step, no dependencies.
+Single-page personal site for Amal Shaji — Senior Data Scientist @ Veracode,
+ex-AWS Bedrock. Plain HTML/CSS/JS, no build step. Interstellar-themed by design.
+
+**Live at [amalshaji.in](https://amalshaji.in)** (GitHub Pages + custom domain).
+Push to `main` and it deploys automatically in about a minute.
 
 ## Run locally
 
@@ -11,20 +14,20 @@ python -m http.server 4173
 
 Then open http://localhost:4173.
 
+## Docs
+
+- [docs/01-website-build.md](docs/01-website-build.md) — what was built and why:
+  structure, design system, creative features, content sources
+- [docs/02-deployment.md](docs/02-deployment.md) — hosting, domain, DNS records,
+  HTTPS setup, and the gotchas hit along the way
+- [docs/03-maintenance.md](docs/03-maintenance.md) — how to make changes, open
+  items, annual checklist
+
 ## Structure
 
 - `index.html` — all content (edit text here)
 - `css/style.css` — theme; colors live in the `:root` variables at the top
-- `js/main.js` — starfield canvas, scroll reveals, nav highlighting
-- `assets/Amal_Shaji_Resume.pdf` — the downloadable résumé; replace this file when the résumé updates
-
-## Deploy (free options)
-
-**GitHub Pages** — push this folder to a repo, then Settings → Pages → deploy from
-branch `main`, root. The site appears at `https://<user>.github.io/<repo>/`.
-
-**Netlify / Vercel** — drag-and-drop the folder, or connect the repo. No build
-command needed; publish directory is the repo root.
-
-Note: the phone number is intentionally left off the public site (it remains in the
-downloadable PDF). Public sites get scraped; email + LinkedIn are the contact surface.
+- `js/main.js` — starfield, decode effect, constellation, TARS, Morse easter egg
+- `assets/Amal_Shaji_Resume.pdf` — the downloadable résumé; replace this file when
+  the résumé updates
+- `CNAME` — custom-domain binding for GitHub Pages (don't delete)
