@@ -34,11 +34,24 @@
 3. **Mobile nav gap (known, accepted for now)** — below 640px the section links are
    hidden and there's no hamburger menu; only the logo + Résumé button remain.
    Phone users must scroll. Fix = small hamburger or a persistent "Contact" link.
-4. **Deploy the Gargantua Twin** — the AI chat widget is built and committed but
-   dormant: `js/twin.js` has an empty `TWIN_ENDPOINT`, so it injects nothing on the
-   live site. To switch it on, deploy the Cloudflare Worker and paste its URL into
-   that constant — full runbook in `twin/README.md`. Needs a free Cloudflare
-   account + an Anthropic API key with a spend ceiling set.
+## Gargantua Twin — deployed (2026-06-25)
+
+The AI chat widget is **live**. Operational facts:
+
+- **Worker URL:** `https://gargantua-twin.amalshajicreativist.workers.dev`
+  (wired into `TWIN_ENDPOINT` in `js/twin.js`).
+- **Cloudflare account:** a *separate* account from the website's — signed in as
+  `amalshajicreativist@gmail.com` (the GitHub/site work is under different
+  credentials). `wrangler login` stores this on disk; `npx wrangler whoami` shows it.
+- **Secret:** `ANTHROPIC_API_KEY` is set in the Worker's secret store (never in the
+  repo). Rotate with `npx wrangler secret put ANTHROPIC_API_KEY` from `twin/`.
+- **Rate limit KV:** namespace `RATE_LIMIT` id `e7858b1b6da247e8913f0947e69d25b9`.
+- **Redeploy after editing `twin/worker.js` or `twin/corpus.js`:**
+  `cd twin; npx wrangler deploy` (no site push needed — the corpus is bundled).
+- **Watch live logs:** `cd twin; npx wrangler tail`.
+- **Verified:** Haiku default + Sonnet escalation both answer correctly; in-browser
+  call from the site succeeds; CORS allowlist covers amalshaji.in + localhost.
+- **Cost guard:** set/confirm the monthly spend ceiling in the Anthropic Console.
 
 ## Nice-to-have ideas (discussed, not started)
 
