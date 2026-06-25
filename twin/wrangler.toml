@@ -10,14 +10,10 @@ compatibility_date = "2026-06-01"
 TWIN_MODEL_DEFAULT = "claude-haiku-4-5"
 TWIN_MODEL_ESCALATE = "claude-sonnet-4-6"
 
-# Per-IP rate limiting via Workers KV. Create the namespace once:
-#   npx wrangler kv namespace create RATE_LIMIT
-# then paste the printed id below and uncomment this block. If you skip this,
-# the Worker still runs — rate limiting is simply disabled (the Anthropic spend
-# ceiling and input caps remain your bill protection).
-# [[kv_namespaces]]
-# binding = "RATE_LIMIT"
-# id = "PASTE_THE_ID_FROM_THE_CREATE_COMMAND"
+# Per-IP rate limiting via Workers KV.
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "e7858b1b6da247e8913f0947e69d25b9"
 
 # ANTHROPIC_API_KEY is a SECRET, not a var. Never put it here. Set it with:
 #   npx wrangler secret put ANTHROPIC_API_KEY

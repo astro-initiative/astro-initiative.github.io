@@ -13,7 +13,7 @@
   "use strict";
 
   // ===== config =====
-  var TWIN_ENDPOINT = ""; // <-- paste your Worker URL here to go live
+  var TWIN_ENDPOINT = "https://gargantua-twin.amalshajicreativist.workers.dev"; // live
   var DEMO = location.hash.indexOf("twin-demo") !== -1;
 
   if (!TWIN_ENDPOINT && !DEMO) return; // production stays clean until configured
