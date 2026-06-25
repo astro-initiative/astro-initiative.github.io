@@ -1,0 +1,23 @@
+# Cloudflare Worker config for the Gargantua Twin backend.
+# Deploy: npx wrangler deploy   (see README.md for the full runbook)
+
+name = "gargantua-twin"
+main = "worker.js"
+compatibility_date = "2026-06-01"
+
+# Model overrides (optional — code defaults to Haiku / Sonnet if unset).
+[vars]
+TWIN_MODEL_DEFAULT = "claude-haiku-4-5"
+TWIN_MODEL_ESCALATE = "claude-sonnet-4-6"
+
+# Per-IP rate limiting via Workers KV. Create the namespace once:
+#   npx wrangler kv namespace create RATE_LIMIT
+# then paste the printed id below and uncomment this block. If you skip this,
+# the Worker still runs — rate limiting is simply disabled (the Anthropic spend
+# ceiling and input caps remain your bill protection).
+# [[kv_namespaces]]
+# binding = "RATE_LIMIT"
+# id = "PASTE_THE_ID_FROM_THE_CREATE_COMMAND"
+
+# ANTHROPIC_API_KEY is a SECRET, not a var. Never put it here. Set it with:
+#   npx wrangler secret put ANTHROPIC_API_KEY

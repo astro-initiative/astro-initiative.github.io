@@ -1,2 +1,7 @@
 # local Claude Code settings (machine-specific)
 .claude/settings.local.json
+
+# Cloudflare Wrangler (twin backend) — local build artifacts & deps
+twin/.wrangler/
+twin/node_modules/
+.dev.vars

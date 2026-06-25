@@ -28,6 +28,8 @@ Then open http://localhost:4173.
 - `index.html` — all content (edit text here)
 - `css/style.css` — theme; colors live in the `:root` variables at the top
 - `js/main.js` — starfield, decode effect, constellation, TARS, Morse easter egg
+- `js/twin.js` — the Gargantua Twin chat widget (self-disables until configured)
+- `twin/` — the AI twin backend (Cloudflare Worker + corpus); see [twin/README.md](twin/README.md)
 - `assets/Amal_Shaji_Resume.pdf` — the downloadable résumé; replace this file when
   the résumé updates
 - `CNAME` — custom-domain binding for GitHub Pages (don't delete)

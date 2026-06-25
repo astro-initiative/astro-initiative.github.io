@@ -21,6 +21,7 @@
 | Skills star chart | `CONSTELLATIONS` array in `js/main.js` (labels, x/y, links) |
 | TARS quips | `tarsQuips` array in `js/main.js` |
 | Résumé download | Replace `assets/Amal_Shaji_Resume.pdf` (keep the filename) |
+| AI twin's knowledge | `twin/corpus.js`, then `npx wrangler deploy` (see `twin/README.md`) |
 
 ## Open items (as of 2026-06-12)
 
@@ -33,6 +34,11 @@
 3. **Mobile nav gap (known, accepted for now)** — below 640px the section links are
    hidden and there's no hamburger menu; only the logo + Résumé button remain.
    Phone users must scroll. Fix = small hamburger or a persistent "Contact" link.
+4. **Deploy the Gargantua Twin** — the AI chat widget is built and committed but
+   dormant: `js/twin.js` has an empty `TWIN_ENDPOINT`, so it injects nothing on the
+   live site. To switch it on, deploy the Cloudflare Worker and paste its URL into
+   that constant — full runbook in `twin/README.md`. Needs a free Cloudflare
+   account + an Anthropic API key with a spend ceiling set.
 
 ## Nice-to-have ideas (discussed, not started)
 
