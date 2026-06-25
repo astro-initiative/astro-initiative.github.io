@@ -26,14 +26,26 @@
   var listening = false;
   var speakOn = false;
   var recognition = null;
+  var heroHint = null;
 
   // ===== styles =====
   var css = `
 .gtwin-trigger{position:fixed;left:1.4rem;bottom:1.4rem;z-index:30;width:54px;height:54px;
   border-radius:50%;border:1px solid rgba(148,170,220,.18);background:rgba(6,9,17,.85);
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;display:none;align-items:center;justify-content:center;
   box-shadow:0 6px 24px rgba(0,0,0,.5);transition:transform .2s,border-color .2s}
+.gtwin-trigger.gtwin-show{display:flex}
 .gtwin-trigger:hover{transform:translateY(-2px);border-color:rgba(240,168,75,.6)}
+.gargantua.gtwin-clickable{pointer-events:auto;cursor:pointer}
+.gargantua.gtwin-clickable .gargantua__ring{transition:filter .3s}
+.gargantua.gtwin-clickable:hover .gargantua__ring{filter:brightness(1.45)}
+.gtwin-hero-hint{position:fixed;right:clamp(2rem,24vw,21rem);top:50%;transform:translateY(-50%);z-index:6;
+  display:flex;align-items:center;gap:7px;font-family:"JetBrains Mono",monospace;font-size:.72rem;
+  letter-spacing:.12em;color:#f0a84b;background:rgba(6,9,17,.55);border:1px solid rgba(240,168,75,.3);
+  border-radius:999px;padding:.4rem .85rem;pointer-events:none;opacity:0;transition:opacity .5s}
+.gtwin-hero-hint.gtwin-show{opacity:.9}
+.gtwin-hero-hint .gtwin-arrow{animation:gtwin-nudge 1.8s ease-in-out infinite}
+@keyframes gtwin-nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
 .gtwin-bh{position:relative;width:30px;height:30px}
 .gtwin-bh__ring{position:absolute;inset:6px;border-radius:50%;
   box-shadow:0 0 8px 2px rgba(247,196,122,.85),0 0 18px 6px rgba(240,168,75,.45),
@@ -277,6 +289,10 @@
   // ===== events =====
   function openPanel() {
     panel.classList.add("gtwin-open");
+    if (heroHint) {
+      heroHint.remove();
+      heroHint = null;
+    }
     renderChips();
     if (messages.length === 0 && log.children.length === 0) {
       addMsg("bot", "Hi — I'm Amal's AI twin, and I answer from his actual work and writing. Ask me anything about what I build, where I've worked, or what I'm looking for.");
@@ -316,4 +332,48 @@
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && panel.classList.contains("gtwin-open")) closePanel();
   });
+
+  // ===== primary trigger: the big hero Gargantua (desktop) =====
+  // On wide screens the hero black hole IS the launcher; the small corner
+  // button only appears once the hero scrolls out of view, so the twin stays
+  // reachable on a long page. On small screens (Gargantua dimmed/off-screen)
+  // or other pages, the corner button is shown from the start.
+  var heroBH = document.getElementById("gargantua");
+  var bigOK = window.matchMedia("(min-width: 881px) and (hover: hover)").matches;
+
+  if (heroBH && bigOK) {
+    heroBH.classList.add("gtwin-clickable");
+    heroBH.setAttribute("role", "button");
+    heroBH.setAttribute("tabindex", "0");
+    heroBH.setAttribute("aria-label", "Chat with Amal's AI twin");
+    heroBH.removeAttribute("aria-hidden");
+    heroBH.addEventListener("click", openPanel);
+    heroBH.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openPanel();
+      }
+    });
+
+    heroHint = document.createElement("div");
+    heroHint.className = "gtwin-hero-hint gtwin-show";
+    heroHint.innerHTML =
+      'ask my AI twin <span class="gtwin-arrow" aria-hidden="true">→</span>';
+    document.body.appendChild(heroHint);
+
+    // The corner trigger appears once the hero black hole has (mostly) scrolled
+    // out of view, so the twin stays reachable on a long page; while the hero
+    // is up, only the big Gargantua + its hint show.
+    var syncTriggers = function () {
+      var heroInView = heroBH.getBoundingClientRect().bottom > 100;
+      trigger.classList.toggle("gtwin-show", !heroInView);
+      if (heroHint) heroHint.classList.toggle("gtwin-show", heroInView);
+    };
+    window.addEventListener("scroll", syncTriggers, { passive: true });
+    window.addEventListener("resize", syncTriggers);
+    syncTriggers();
+  } else {
+    // no hero here (small screens / other pages): always show the corner trigger
+    trigger.classList.add("gtwin-show");
+  }
 })();
