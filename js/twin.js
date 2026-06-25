@@ -138,7 +138,32 @@
 .gtwin-reduced .gtwin-disk,.gtwin-reduced .gtwin-rim{animation:none}
 .gtwin-reduced .gtwin-overlay.gtwin-open .gtwin-portal{animation:none}
 .gtwin-reduced .gtwin-msg{animation:none}
-@media (max-width:640px){.gtwin-trigger{left:1rem;bottom:1rem}}
+
+/* ===== mobile: full-height event-horizon sheet (circle is desktop-only) ===== */
+@media (max-width:640px){
+  .gtwin-trigger{left:1rem;bottom:1rem}
+  .gtwin-overlay{padding:0;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;
+    align-items:stretch}
+  .gtwin-portal{width:100%;height:100%;aspect-ratio:auto;border-radius:0}
+  .gtwin-overlay.gtwin-open .gtwin-portal{animation:gtwin-rise .3s ease both}
+  .gtwin-disk,.gtwin-rim{display:none}
+  .gtwin-core{inset:0;border-radius:0;align-items:stretch;
+    background:radial-gradient(125% 55% at 50% 0%,#0c1322 0%,#06090f 55%,#02040a 100%)}
+  .gtwin-core::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;z-index:2;
+    background:linear-gradient(90deg,transparent,rgba(247,196,122,.95),rgba(240,168,75,.6),transparent);
+    box-shadow:0 0 18px 3px rgba(240,168,75,.5)}
+  .gtwin-stage{width:auto;height:auto;flex:1;align-self:stretch;gap:.7rem;
+    padding:calc(env(safe-area-inset-top,0px) + 1.1rem) 1.1rem calc(env(safe-area-inset-bottom,0px) + .9rem)}
+  .gtwin-ptitle{font-size:.95rem}
+  .gtwin-pdot{width:12px;height:12px}
+  .gtwin-msg{max-width:86%;font-size:.92rem;padding:.6rem .8rem}
+  .gtwin-chips{justify-content:flex-start}
+  .gtwin-chip{font-size:.78rem;padding:.4rem .75rem}
+  .gtwin-log{gap:.6rem}
+  .gtwin-input{font-size:16px;min-height:40px;max-height:120px}/* 16px = no iOS zoom-on-focus */
+  .gtwin-send,.gtwin-iconbtn{width:38px;height:38px}
+}
+@keyframes gtwin-rise{from{transform:translateY(100%)}to{transform:none}}
 `;
 
   var style = document.createElement("style");
@@ -326,12 +351,26 @@
   }
 
   // ===== open / close =====
+  // On mobile, pin the sheet to the *visible* viewport so the on-screen
+  // keyboard shrinks it (input stays above the keyboard) instead of covering it.
+  function fitViewport() {
+    var vv = window.visualViewport;
+    if (vv && window.innerWidth <= 640 && overlay.classList.contains("gtwin-open")) {
+      overlay.style.height = vv.height + "px";
+      overlay.style.top = vv.offsetTop + "px";
+    } else {
+      overlay.style.height = "";
+      overlay.style.top = "";
+    }
+  }
+
   function openPanel() {
     if (heroHint) {
       heroHint.remove();
       heroHint = null;
     }
     overlay.classList.add("gtwin-open");
+    fitViewport();
     renderChips();
     if (messages.length === 0 && log.children.length === 0) {
       addMsg(
@@ -345,8 +384,16 @@
   }
   function closePanel() {
     overlay.classList.remove("gtwin-open");
+    overlay.style.height = "";
+    overlay.style.top = "";
     if (window.speechSynthesis) window.speechSynthesis.cancel();
   }
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", fitViewport);
+    window.visualViewport.addEventListener("scroll", fitViewport);
+  }
+  window.addEventListener("resize", fitViewport);
 
   // ===== events =====
   trigger.addEventListener("click", function () {
