@@ -1,12 +1,14 @@
 /* Gargantua Twin — front-end widget.
  *
- * A self-contained chat panel that overlays the site. It injects its own DOM
- * and namespaced (gtwin-*) styles, so it touches nothing else on the page —
- * the only edit to the existing site is the <script> include in index.html.
+ * A self-contained AI chat that opens as a circular "event horizon" portal —
+ * the chat happens INSIDE the black hole, which blooms open with a rotating
+ * accretion disk. It injects its own DOM + namespaced (gtwin-*) styles, so it
+ * touches nothing else on the page; the only edit to the existing site is the
+ * <script> include in index.html.
  *
- * It stays INVISIBLE until configured: set TWIN_ENDPOINT to your deployed
- * Cloudflare Worker URL to switch it on. Until then the site is unchanged.
- * (Append #twin-demo to the URL to preview the UI with a canned reply.)
+ * Stays INVISIBLE until configured: set TWIN_ENDPOINT to your deployed
+ * Cloudflare Worker URL to switch it on. (Append #twin-demo to preview the UI
+ * with a canned reply.)
  */
 
 (function () {
@@ -36,16 +38,6 @@
   box-shadow:0 6px 24px rgba(0,0,0,.5);transition:transform .2s,border-color .2s}
 .gtwin-trigger.gtwin-show{display:flex}
 .gtwin-trigger:hover{transform:translateY(-2px);border-color:rgba(240,168,75,.6)}
-.gargantua.gtwin-clickable{pointer-events:auto;cursor:pointer}
-.gargantua.gtwin-clickable .gargantua__ring{transition:filter .3s}
-.gargantua.gtwin-clickable:hover .gargantua__ring{filter:brightness(1.45)}
-.gtwin-hero-hint{position:fixed;right:clamp(2rem,24vw,21rem);top:50%;transform:translateY(-50%);z-index:6;
-  display:flex;align-items:center;gap:7px;font-family:"JetBrains Mono",monospace;font-size:.72rem;
-  letter-spacing:.12em;color:#f0a84b;background:rgba(6,9,17,.55);border:1px solid rgba(240,168,75,.3);
-  border-radius:999px;padding:.4rem .85rem;pointer-events:none;opacity:0;transition:opacity .5s}
-.gtwin-hero-hint.gtwin-show{opacity:.9}
-.gtwin-hero-hint .gtwin-arrow{animation:gtwin-nudge 1.8s ease-in-out infinite}
-@keyframes gtwin-nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
 .gtwin-bh{position:relative;width:30px;height:30px}
 .gtwin-bh__ring{position:absolute;inset:6px;border-radius:50%;
   box-shadow:0 0 8px 2px rgba(247,196,122,.85),0 0 18px 6px rgba(240,168,75,.45),
@@ -57,58 +49,102 @@
 .gtwin-trigger:not(.gtwin-reduced) .gtwin-bh__ring{animation:gtwin-pulse 6s ease-in-out infinite}
 @keyframes gtwin-pulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.25)}}
 
-.gtwin-panel{position:fixed;left:1.4rem;bottom:5.4rem;z-index:31;width:min(380px,calc(100vw - 2.8rem));
-  height:min(560px,70vh);display:none;flex-direction:column;border-radius:18px;overflow:hidden;
-  background:rgba(8,11,20,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  border:1px solid rgba(148,170,220,.16);box-shadow:0 20px 60px rgba(0,0,0,.6);
-  font-family:"Inter",system-ui,sans-serif;color:#d7deed}
-.gtwin-panel.gtwin-open{display:flex;animation:gtwin-in .22s ease}
-@keyframes gtwin-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.gargantua.gtwin-clickable{pointer-events:auto;cursor:pointer}
+.gargantua.gtwin-clickable .gargantua__ring{transition:filter .3s}
+.gargantua.gtwin-clickable:hover .gargantua__ring{filter:brightness(1.45)}
+.gtwin-hero-hint{position:fixed;right:clamp(2rem,24vw,21rem);top:50%;transform:translateY(-50%);z-index:6;
+  display:flex;align-items:center;gap:7px;font-family:"JetBrains Mono",monospace;font-size:.72rem;
+  letter-spacing:.12em;color:#f0a84b;background:rgba(6,9,17,.55);border:1px solid rgba(240,168,75,.3);
+  border-radius:999px;padding:.4rem .85rem;pointer-events:none;opacity:0;transition:opacity .5s}
+.gtwin-hero-hint.gtwin-show{opacity:.9}
+.gtwin-hero-hint .gtwin-arrow{animation:gtwin-nudge 1.8s ease-in-out infinite}
+@keyframes gtwin-nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
 
-.gtwin-head{display:flex;align-items:center;gap:10px;padding:.85rem 1rem;
-  border-bottom:1px solid rgba(148,170,220,.12);background:rgba(6,9,17,.6)}
-.gtwin-head__dot{width:12px;height:12px;border-radius:50%;border:2px solid #f0a84b;
-  box-shadow:0 0 8px rgba(240,168,75,.7);flex:none}
-.gtwin-head__t{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.95rem;color:#f0f4fc}
-.gtwin-head__s{font-size:.7rem;color:#8a96b0;font-family:"JetBrains Mono",monospace}
-.gtwin-head__sp{margin-left:auto;display:flex;gap:4px}
-.gtwin-iconbtn{background:transparent;border:1px solid rgba(148,170,220,.18);border-radius:8px;
-  width:30px;height:30px;color:#8a96b0;cursor:pointer;display:flex;align-items:center;
-  justify-content:center;font-size:14px;transition:color .2s,border-color .2s}
+/* ===== circular event-horizon portal ===== */
+.gtwin-overlay{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;
+  padding:1rem;background:radial-gradient(circle at 50% 50%,rgba(8,11,20,.5),rgba(2,4,10,.85));
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);opacity:0;transition:opacity .35s}
+.gtwin-overlay.gtwin-open{display:flex;opacity:1}
+
+.gtwin-portal{position:relative;width:clamp(300px,96vmin,560px);aspect-ratio:1;border-radius:50%;
+  font-family:"Inter",system-ui,sans-serif;color:#d7deed;will-change:transform}
+.gtwin-overlay.gtwin-open .gtwin-portal{animation:gtwin-bloom .62s cubic-bezier(.18,.8,.24,1.08) both}
+@keyframes gtwin-bloom{0%{transform:scale(.12) rotate(-22deg);opacity:0}
+  55%{opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
+
+.gtwin-disk{position:absolute;inset:-6%;border-radius:50%;filter:blur(7px);
+  background:conic-gradient(from 0deg,rgba(247,196,122,0) 0deg,rgba(247,196,122,.85) 38deg,
+    rgba(240,168,75,.22) 110deg,rgba(247,196,122,0) 180deg,rgba(240,168,75,.7) 248deg,
+    rgba(255,222,168,.2) 318deg,rgba(247,196,122,0) 360deg);
+  animation:gtwin-spin 13s linear infinite}
+@keyframes gtwin-spin{to{transform:rotate(360deg)}}
+
+.gtwin-rim{position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  box-shadow:0 0 22px 5px rgba(247,196,122,.65),0 0 78px 20px rgba(240,168,75,.32),
+  inset 0 0 30px 7px rgba(247,196,122,.5);animation:gtwin-rimpulse 6s ease-in-out infinite}
+@keyframes gtwin-rimpulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.2)}}
+
+.gtwin-core{position:absolute;inset:5.5%;border-radius:50%;overflow:hidden;display:flex;
+  align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 40%,#0a0f1c 0%,#05080f 56%,#02040a 100%)}
+
+.gtwin-stage{width:62%;height:68%;display:flex;flex-direction:column;gap:.5rem}
+
+.gtwin-phead{display:flex;align-items:center;gap:8px;flex:none}
+.gtwin-pdot{width:10px;height:10px;border-radius:50%;border:2px solid #f0a84b;
+  box-shadow:0 0 8px rgba(240,168,75,.8);flex:none}
+.gtwin-ptitle{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.82rem;color:#f0f4fc;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gtwin-phead .gtwin-iconbtn{margin-left:auto}
+.gtwin-phead .gtwin-pclose{margin-left:4px}
+.gtwin-iconbtn{background:transparent;border:1px solid rgba(148,170,220,.2);border-radius:8px;
+  width:28px;height:28px;color:#8a96b0;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-size:13px;flex:none;transition:color .2s,border-color .2s}
 .gtwin-iconbtn:hover{color:#f0f4fc;border-color:rgba(240,168,75,.5)}
 .gtwin-iconbtn.gtwin-active{color:#f0a84b;border-color:rgba(240,168,75,.6)}
 
-.gtwin-log{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.7rem}
-.gtwin-msg{max-width:85%;padding:.6rem .8rem;border-radius:12px;font-size:.9rem;line-height:1.5;
-  white-space:pre-wrap;word-wrap:break-word}
+.gtwin-log{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:.5rem;
+  padding-right:2px;scrollbar-width:thin;scrollbar-color:rgba(240,168,75,.4) transparent}
+.gtwin-log::-webkit-scrollbar{width:5px}
+.gtwin-log::-webkit-scrollbar-thumb{background:rgba(240,168,75,.4);border-radius:3px}
+.gtwin-msg{max-width:92%;padding:.5rem .7rem;border-radius:11px;font-size:.83rem;line-height:1.45;
+  white-space:pre-wrap;word-wrap:break-word;animation:gtwin-emerge .4s ease both}
 .gtwin-msg--user{align-self:flex-end;background:#f0a84b;color:#1a1206;border-bottom-right-radius:3px}
-.gtwin-msg--bot{align-self:flex-start;background:rgba(20,28,46,.9);border:1px solid rgba(148,170,220,.12);
+.gtwin-msg--bot{align-self:flex-start;background:rgba(20,28,46,.92);border:1px solid rgba(148,170,220,.14);
   border-bottom-left-radius:3px}
 .gtwin-msg--err{align-self:flex-start;background:rgba(60,20,20,.7);border:1px solid rgba(200,90,90,.4);
-  color:#f0c0c0;font-size:.82rem}
-.gtwin-typing{align-self:flex-start;color:#8a96b0;font-size:.8rem;font-family:"JetBrains Mono",monospace}
+  color:#f0c0c0;font-size:.78rem}
+@keyframes gtwin-emerge{from{opacity:0;transform:translateY(9px) scale(.96)}to{opacity:1;transform:none}}
+.gtwin-typing{align-self:flex-start;color:#f0a84b;font-size:.85rem;letter-spacing:.25em;
+  animation:gtwin-fall 1.1s ease-in-out infinite}
+@keyframes gtwin-fall{0%,100%{opacity:.35}50%{opacity:1}}
 
-.gtwin-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 1rem .6rem}
+.gtwin-chips{display:flex;flex-wrap:wrap;gap:5px;flex:none;justify-content:center}
 .gtwin-chip{background:rgba(20,28,46,.7);border:1px solid rgba(148,170,220,.16);border-radius:999px;
-  padding:.35rem .7rem;font-size:.76rem;color:#9ec5ff;cursor:pointer;transition:border-color .2s}
+  padding:.3rem .6rem;font-size:.71rem;color:#9ec5ff;cursor:pointer;transition:border-color .2s}
 .gtwin-chip:hover{border-color:rgba(240,168,75,.5)}
 
-.gtwin-foot{display:flex;gap:6px;padding:.7rem;border-top:1px solid rgba(148,170,220,.12);align-items:flex-end}
-.gtwin-input{flex:1;resize:none;max-height:90px;min-height:38px;padding:.55rem .7rem;border-radius:10px;
-  background:rgba(6,9,17,.7);border:1px solid rgba(148,170,220,.18);color:#d7deed;font-family:inherit;
-  font-size:.88rem;line-height:1.4;outline:none}
+.gtwin-foot{display:flex;gap:5px;align-items:flex-end;flex:none}
+.gtwin-input{flex:1;resize:none;max-height:64px;min-height:34px;padding:.45rem .6rem;border-radius:9px;
+  background:rgba(2,4,10,.7);border:1px solid rgba(148,170,220,.2);color:#d7deed;font-family:inherit;
+  font-size:.82rem;line-height:1.35;outline:none}
 .gtwin-input:focus{border-color:rgba(240,168,75,.5)}
-.gtwin-send{flex:none;width:38px;height:38px;border-radius:10px;border:none;background:#f0a84b;color:#1a1206;
-  font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.gtwin-send{flex:none;width:34px;height:34px;border-radius:9px;border:none;background:#f0a84b;color:#1a1206;
+  font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
 .gtwin-send:hover{background:#f7b863}
 .gtwin-send:disabled{opacity:.45;cursor:default}
 .gtwin-mic.gtwin-listening{color:#f0a84b;border-color:rgba(240,168,75,.7);animation:gtwin-pulse 1.2s infinite}
-@media (max-width:640px){.gtwin-trigger{left:1rem;bottom:1rem}.gtwin-panel{left:1rem;bottom:4.8rem}}
+
+.gtwin-reduced .gtwin-disk,.gtwin-reduced .gtwin-rim{animation:none}
+.gtwin-reduced .gtwin-overlay.gtwin-open .gtwin-portal{animation:none}
+.gtwin-reduced .gtwin-msg{animation:none}
+@media (max-width:640px){.gtwin-trigger{left:1rem;bottom:1rem}}
 `;
 
   var style = document.createElement("style");
   style.textContent = css;
   document.head.appendChild(style);
+  if (reduced) document.documentElement.classList.add("gtwin-reduced");
 
   // ===== build DOM =====
   var trigger = document.createElement("button");
@@ -119,45 +155,51 @@
     '<span class="gtwin-bh"><span class="gtwin-bh__disk"></span>' +
     '<span class="gtwin-bh__ring"></span><span class="gtwin-bh__core"></span></span>';
 
-  var panel = document.createElement("div");
-  panel.className = "gtwin-panel";
-  panel.setAttribute("role", "dialog");
-  panel.setAttribute("aria-label", "Chat with Amal's AI twin");
-  panel.innerHTML =
-    '<div class="gtwin-head">' +
-    '<span class="gtwin-head__dot"></span>' +
-    '<div><div class="gtwin-head__t">Amal — AI twin</div>' +
-    '<div class="gtwin-head__s">grounded in my own work</div></div>' +
-    '<div class="gtwin-head__sp">' +
-    '<button class="gtwin-iconbtn gtwin-speak" aria-label="Toggle speech" title="Read replies aloud">🔊</button>' +
-    '<button class="gtwin-iconbtn gtwin-close" aria-label="Close">✕</button>' +
-    "</div></div>" +
+  var overlay = document.createElement("div");
+  overlay.className = "gtwin-overlay";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.setAttribute("aria-label", "Chat with Amal's AI twin");
+  overlay.innerHTML =
+    '<div class="gtwin-portal">' +
+    '<div class="gtwin-disk" aria-hidden="true"></div>' +
+    '<div class="gtwin-rim" aria-hidden="true"></div>' +
+    '<div class="gtwin-core">' +
+    '<div class="gtwin-stage">' +
+    '<div class="gtwin-phead">' +
+    '<span class="gtwin-pdot" aria-hidden="true"></span>' +
+    '<span class="gtwin-ptitle">Amal — AI twin</span>' +
+    '<button class="gtwin-iconbtn gtwin-speak" aria-label="Read replies aloud" title="Read replies aloud">🔊</button>' +
+    '<button class="gtwin-iconbtn gtwin-pclose" aria-label="Close">✕</button>' +
+    "</div>" +
     '<div class="gtwin-log" aria-live="polite"></div>' +
     '<div class="gtwin-chips"></div>' +
     '<div class="gtwin-foot">' +
-    '<textarea class="gtwin-input" rows="1" placeholder="Ask about my work, my experience…" aria-label="Message"></textarea>' +
+    '<textarea class="gtwin-input" rows="1" placeholder="Ask me anything…" aria-label="Message"></textarea>' +
     (SpeechRec
       ? '<button class="gtwin-iconbtn gtwin-mic" aria-label="Speak" title="Speak your question">🎤</button>'
       : "") +
     '<button class="gtwin-send" aria-label="Send">↑</button>' +
-    "</div>";
+    "</div>" +
+    "</div></div></div>";
 
   document.body.appendChild(trigger);
-  document.body.appendChild(panel);
+  document.body.appendChild(overlay);
 
-  var log = panel.querySelector(".gtwin-log");
-  var chips = panel.querySelector(".gtwin-chips");
-  var input = panel.querySelector(".gtwin-input");
-  var sendBtn = panel.querySelector(".gtwin-send");
-  var micBtn = panel.querySelector(".gtwin-mic");
-  var speakBtn = panel.querySelector(".gtwin-speak");
-  var closeBtn = panel.querySelector(".gtwin-close");
+  var portal = overlay.querySelector(".gtwin-portal");
+  var log = overlay.querySelector(".gtwin-log");
+  var chips = overlay.querySelector(".gtwin-chips");
+  var input = overlay.querySelector(".gtwin-input");
+  var sendBtn = overlay.querySelector(".gtwin-send");
+  var micBtn = overlay.querySelector(".gtwin-mic");
+  var speakBtn = overlay.querySelector(".gtwin-speak");
+  var closeBtn = overlay.querySelector(".gtwin-pclose");
 
   var STARTERS = [
-    "What are you working on at Veracode?",
+    "Working on at Veracode?",
     "Tell me about MARES.",
-    "What roles are you looking for?",
-    "What's with the black hole?",
+    "What roles are you after?",
+    "Why the black hole?",
   ];
 
   // ===== rendering =====
@@ -192,8 +234,7 @@
         setTimeout(function () {
           resolve(
             "I'm the demo twin — the backend isn't wired up in this preview. " +
-              "Once the Cloudflare Worker is live, I answer from Amal's real corpus " +
-              "(his AWS Bedrock work, the Veracode move, the Interstellar thing, and so on)."
+              "Once the Cloudflare Worker is live, I answer from Amal's real corpus."
           );
         }, 700);
       });
@@ -242,8 +283,7 @@
           "I couldn't reach my twin just now — but the real Amal is at amalshajiprof@gmail.com.",
           "err"
         );
-        // keep history consistent: drop the unanswered user turn
-        messages.pop();
+        messages.pop(); // drop the unanswered user turn
         if (window.console) console.error("twin error:", err);
       })
       .then(function () {
@@ -259,7 +299,6 @@
     window.speechSynthesis.cancel();
     var u = new SpeechSynthesisUtterance(text);
     u.rate = 1.02;
-    u.pitch = 1;
     window.speechSynthesis.speak(u);
   }
 
@@ -286,31 +325,41 @@
     recognition.start();
   }
 
-  // ===== events =====
+  // ===== open / close =====
   function openPanel() {
-    panel.classList.add("gtwin-open");
     if (heroHint) {
       heroHint.remove();
       heroHint = null;
     }
+    overlay.classList.add("gtwin-open");
     renderChips();
     if (messages.length === 0 && log.children.length === 0) {
-      addMsg("bot", "Hi — I'm Amal's AI twin, and I answer from his actual work and writing. Ask me anything about what I build, where I've worked, or what I'm looking for.");
+      addMsg(
+        "bot",
+        "Hi — I'm Amal's AI twin, grounded in his real work. Ask me anything about what I build, where I've worked, or what I'm looking for."
+      );
     }
     setTimeout(function () {
       input.focus();
-    }, 60);
+    }, 300);
   }
   function closePanel() {
-    panel.classList.remove("gtwin-open");
+    overlay.classList.remove("gtwin-open");
     if (window.speechSynthesis) window.speechSynthesis.cancel();
   }
 
+  // ===== events =====
   trigger.addEventListener("click", function () {
-    if (panel.classList.contains("gtwin-open")) closePanel();
+    if (overlay.classList.contains("gtwin-open")) closePanel();
     else openPanel();
   });
   closeBtn.addEventListener("click", closePanel);
+  overlay.addEventListener("click", function (e) {
+    if (e.target === overlay) closePanel(); // click the void around the portal
+  });
+  portal.addEventListener("click", function (e) {
+    e.stopPropagation();
+  });
   sendBtn.addEventListener("click", send);
   if (micBtn) micBtn.addEventListener("click", startListening);
   speakBtn.addEventListener("click", function () {
@@ -327,10 +376,10 @@
   });
   input.addEventListener("input", function () {
     input.style.height = "auto";
-    input.style.height = Math.min(input.scrollHeight, 90) + "px";
+    input.style.height = Math.min(input.scrollHeight, 64) + "px";
   });
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && panel.classList.contains("gtwin-open")) closePanel();
+    if (e.key === "Escape" && overlay.classList.contains("gtwin-open")) closePanel();
   });
 
   // ===== primary trigger: the big hero Gargantua (desktop) =====
@@ -361,9 +410,6 @@
       'ask my AI twin <span class="gtwin-arrow" aria-hidden="true">→</span>';
     document.body.appendChild(heroHint);
 
-    // The corner trigger appears once the hero black hole has (mostly) scrolled
-    // out of view, so the twin stays reachable on a long page; while the hero
-    // is up, only the big Gargantua + its hint show.
     var syncTriggers = function () {
       var heroInView = heroBH.getBoundingClientRect().bottom > 100;
       trigger.classList.toggle("gtwin-show", !heroInView);
@@ -373,7 +419,6 @@
     window.addEventListener("resize", syncTriggers);
     syncTriggers();
   } else {
-    // no hero here (small screens / other pages): always show the corner trigger
     trigger.classList.add("gtwin-show");
   }
 })();
