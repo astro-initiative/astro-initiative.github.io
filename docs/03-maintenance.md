@@ -53,6 +53,22 @@ The AI chat widget is **live**. Operational facts:
   call from the site succeeds; CORS allowlist covers amalshaji.in + localhost.
 - **Cost guard:** set/confirm the monthly spend ceiling in the Anthropic Console.
 
+### Gotcha: Anthropic 403 "Request not allowed" (geo/region) — fixed
+
+Symptom: the twin works intermittently or not at all; the Worker returns 502 and
+`wrangler tail` shows `Anthropic error 403 {"type":"forbidden","message":"Request
+not allowed"}` with `colo: HKG`. Cause: Cloudflare runs the Worker in the colo
+nearest the visitor; from Bengaluru that's often **Hong Kong**, and Anthropic
+blocks API calls that egress from there (unsupported region). It's not the key,
+credits, or billing.
+
+Fix (in place): the Worker routes the Anthropic call through the **AnthropicRelay
+Durable Object**, created with `locationHint: "enam"` (US East), so the call
+always egresses from a supported region. See `worker.js` (AnthropicRelay class +
+the relay.fetch call) and `wrangler.toml` (durable_objects binding + migration).
+Smart Placement was tried first but doesn't relocate a low-traffic Worker fast
+enough to be reliable. Watch live with `cd twin; npx wrangler tail`.
+
 ## Nice-to-have ideas (discussed, not started)
 
 - Photo/portrait in the About section (recruiters connect faster with a face)

@@ -88,6 +88,17 @@ async function rateLimited(env, ip) {
   return false;
 }
 
+// ---- US-pinned egress relay ------------------------------------------------
+// Anthropic blocks API calls that egress from some Cloudflare regions (e.g.
+// Hong Kong) with 403 "Request not allowed". This Durable Object is created
+// with a US location hint, so the call to Anthropic always leaves from a
+// supported region no matter where the visitor — or the Worker — sits.
+export class AnthropicRelay {
+  fetch(request) {
+    return fetch(request);
+  }
+}
+
 // ---- handler ---------------------------------------------------------------
 
 export default {
@@ -163,10 +174,14 @@ export default {
       messages: trimmed.map((m) => ({ role: m.role, content: m.content })),
     };
 
-    // --- call Claude ---
+    // --- call Claude (through the US-pinned relay) ---
     let apiRes;
     try {
-      apiRes = await fetch(ANTHROPIC_URL, {
+      const relay = env.ANTHROPIC_RELAY.get(
+        env.ANTHROPIC_RELAY.idFromName("us-relay"),
+        { locationHint: "enam" } // Eastern North America
+      );
+      apiRes = await relay.fetch(ANTHROPIC_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -175,7 +190,8 @@ export default {
         },
         body: JSON.stringify(payload),
       });
-    } catch {
+    } catch (e) {
+      console.error("relay error", e && e.message);
       return json({ error: "Couldn't reach the model. Try again." }, 502, origin);
     }
 

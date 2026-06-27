@@ -5,6 +5,20 @@ name = "gargantua-twin"
 main = "worker.js"
 compatibility_date = "2026-06-01"
 
+# US-pinned egress relay. Anthropic returns 403 "Request not allowed" for API
+# calls that leave Cloudflare from an unsupported region (e.g. Hong Kong, the
+# colo nearest Bengaluru visitors). The AnthropicRelay Durable Object is created
+# with a US location hint, so the outbound call to Anthropic always egresses
+# from a supported region. (Smart Placement was tried first but doesn't relocate
+# a low-traffic Worker reliably; the DO is deterministic.)
+[[durable_objects.bindings]]
+name = "ANTHROPIC_RELAY"
+class_name = "AnthropicRelay"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["AnthropicRelay"]
+
 # Model overrides (optional — code defaults to Haiku / Sonnet if unset).
 [vars]
 TWIN_MODEL_DEFAULT = "claude-haiku-4-5"
