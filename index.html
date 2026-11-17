@@ -133,9 +133,13 @@
           </div>
           <div class="timeline__body">
             <h3>Veracode <span class="timeline__via">· via Accion Labs</span></h3>
-            <p class="timeline__role">Senior Data Scientist</p>
+            <p class="timeline__role">Senior Data Scientist — Agentic AI</p>
             <ul>
-              <li>Applying machine learning to application security — the discipline I practised as a guardian at Amazon, now as the mission itself.</li>
+              <li>Architected the multi-agent system behind <strong>Veracode Fix</strong> — specialised LLM agents orchestrated with LangGraph that generate secure patches for CWE findings in customer codebases — <strong>more than doubling the automated fix rate (30% → 62%)</strong> and cutting remediation time to a quarter.</li>
+              <li>Designed a dependency-graph–based file-grouping algorithm that gives agents full cross-file context, enabling accurate multi-file fixes instead of isolated single-file edits.</li>
+              <li>Implemented an actor–critic loop in which critic agents and executable validators verify every patch for correctness and security before delivery.</li>
+              <li>Built the evaluation and benchmarking framework for the platform's agentic applications — a shared harness with per-application domain validators as plugins.</li>
+              <li>Engineered a Mixture-of-Experts system that generates and optimises CWE-specific fix guides and their prompts — from <strong>~3 weeks of security-researcher effort per guide to under an hour</strong>.</li>
             </ul>
           </div>
         </article>
@@ -144,12 +148,12 @@
           <div class="timeline__meta mono">
             <span class="timeline__log">LOG 02</span>
             <span class="planet planet--aws" aria-hidden="true"></span>
-            <span class="timeline__period">Oct 2022 — Apr 2026</span>
+            <span class="timeline__period">Oct 2022 — Mar 2026</span>
             <span class="timeline__loc">Bengaluru</span>
           </div>
           <div class="timeline__body">
             <h3>Amazon Web Services <span class="timeline__via">· AWS A.I. / Bedrock</span></h3>
-            <p class="timeline__role">System Development Engineer <span class="role__dates mono">Nov 2024 — Apr 2026</span></p>
+            <p class="timeline__role">System Development Engineer <span class="role__dates mono">Nov 2024 — Mar 2026</span></p>
             <p class="timeline__role">Application Engineer <span class="role__dates mono">Oct 2022 — Nov 2024</span></p>
             <ul>
               <li>Architected <strong>MARES</strong>, a Coordinator–Delegator–Worker multi-agent system on Amazon Bedrock that autonomously manages Bedrock region expansion — cutting build time from <strong>2 weeks of manual effort to 4 hours</strong>.</li>
@@ -164,12 +168,12 @@
           <div class="timeline__meta mono">
             <span class="timeline__log">LOG 01 · LAUNCH</span>
             <span class="planet planet--tcs" aria-hidden="true"></span>
-            <span class="timeline__period">Jul 2019 — Oct 2022</span>
+            <span class="timeline__period">Jul 2019 — Aug 2022</span>
             <span class="timeline__loc">Chennai</span>
           </div>
           <div class="timeline__body">
             <h3>Tata Consultancy Services</h3>
-            <p class="timeline__role">System Engineer <span class="role__dates mono">Apr 2021 — Oct 2022</span></p>
+            <p class="timeline__role">System Engineer <span class="role__dates mono">Apr 2021 — Aug 2022</span></p>
             <p class="timeline__role">Assistant System Engineer <span class="role__dates mono">Jul 2019 — Mar 2021</span></p>
             <ul>
               <li>Developed automated anomaly-detection scripts with Elasticsearch and Kibana, reducing manual log-analysis time by <strong>40%</strong>.</li>
@@ -186,6 +190,39 @@
     <section class="section" id="systems">
       <h2 class="section__title"><span class="section__num mono">03</span><span data-decode>Systems I've Built</span></h2>
       <div class="cards">
+
+        <article class="card">
+          <header class="card__head">
+            <h3>Veracode Fix</h3>
+            <span class="card__tag mono">agentic appsec</span>
+          </header>
+          <p class="card__sub">Multi-agent automated vulnerability remediation</p>
+          <p>
+            Specialised LLM agents, orchestrated with LangGraph, that write secure patches
+            for CWE findings in customer codebases. A dependency-graph file-grouping
+            algorithm gives agents cross-file context for multi-file fixes, and an
+            actor–critic loop of critic agents and executable validators checks every
+            patch before it ships.
+          </p>
+          <p class="card__impact"><span class="mono">IMPACT</span> Automated fix rate 30% → 62%; remediation time cut to a quarter.</p>
+          <ul class="card__stack mono"><li>LangGraph</li><li>Multi-Agent</li><li>Actor–Critic</li><li>CWE</li></ul>
+        </article>
+
+        <article class="card">
+          <header class="card__head">
+            <h3>Fix Guide Optimizer</h3>
+            <span class="card__tag mono">mixture-of-experts</span>
+          </header>
+          <p class="card__sub">Automated CWE fix-guide generation</p>
+          <p>
+            A Mixture-of-Experts agentic system that generates and optimises the
+            CWE-specific fix guides — and their paired prompts — that drive Veracode's
+            remediation engine, with benchmark-driven quality control so coverage can
+            grow without the guides drifting.
+          </p>
+          <p class="card__impact"><span class="mono">IMPACT</span> ~3 weeks of security-researcher effort per guide → under an hour.</p>
+          <ul class="card__stack mono"><li>Mixture-of-Experts</li><li>Prompt Optimisation</li><li>Benchmarking</li><li>CWE</li></ul>
+        </article>
 
         <article class="card">
           <header class="card__head">

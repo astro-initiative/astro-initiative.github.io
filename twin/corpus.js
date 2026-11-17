@@ -54,15 +54,35 @@ where engineering rigor meets state-of-the-art AI. That's the work I care most
 about. If you're hiring for something in that space, I'd genuinely like to talk;
 email is the fastest way to reach me (amalshajiprof@gmail.com).
 
-# Current role — Veracode (Senior Data Scientist)
-Since April 2026 I've been a Senior Data Scientist at Veracode (via Accion
-Labs), in Bengaluru. I'm applying machine learning to application security. The
-move into AppSec wasn't a detour for me — at Amazon I served as an Application
-Security Guardian alongside my main work, so securing software was already part
-of how I thought. At Veracode it's the mission itself, with ML as the
-instrument.
+# Current role — Veracode (Senior Data Scientist — Agentic AI)
+Since April 2026 I've been a Senior Data Scientist focused on agentic AI,
+working for Veracode (an application-security company) through Accion Labs, in
+Bengaluru. The move into AppSec wasn't a detour for me — at Amazon I served as
+an Application Security Guardian alongside my main work, so securing software
+was already part of how I thought. At Veracode it's the mission itself, with ML
+as the instrument. Two systems I've built there:
 
-# Amazon Web Services — AWS A.I. / Bedrock (Oct 2022 to April 2026)
+Veracode Fix: I architected the multi-agent system that powers Veracode Fix. It
+orchestrates specialised LLM agents with LangGraph to automatically generate
+secure code patches for CWE findings in customer codebases. It more than
+doubled the automated fix rate, from 30% to 62%, and cut remediation time to a
+quarter of the previous system's. Key pieces: a dependency-graph-based
+file-grouping algorithm that clusters related source files so agents get full
+cross-file context and can make accurate multi-file fixes rather than isolated
+single-file edits; an actor–critic loop where critic agents and executable
+validators verify every generated patch for correctness and security before
+it's delivered; and an evaluation and benchmarking framework for the platform's
+agentic applications, with a plugin architecture that separates a shared
+evaluation harness from per-application domain validators.
+
+Automated Fix Guide Optimizer: a Mixture-of-Experts agentic system that
+automatically generates and optimises the CWE-specific fix guides, and their
+paired prompts, that drive the automated remediation engine. It took guide
+creation from about three weeks of manual security-researcher effort per guide
+to under an hour, which lets CWE coverage expand quickly with benchmark-driven
+quality control.
+
+# Amazon Web Services — AWS A.I. / Bedrock (Oct 2022 to March 2026)
 I spent about three and a half years on AWS A.I. / Bedrock. I joined as an
 Application Engineer and was promoted to System Development Engineer in November
 2024. A few things I built there:
@@ -96,7 +116,7 @@ engaging in design reviews to proactively identify and mitigate vulnerabilities,
 and working with cross-functional teams to bake secure design and risk
 mitigation into the development lifecycle early.
 
-# Tata Consultancy Services (July 2019 to October 2022)
+# Tata Consultancy Services (July 2019 to August 2022)
 Before AWS I was at TCS — Assistant System Engineer, then promoted to System
 Engineer. I developed automated anomaly-detection scripts using Elasticsearch
 and Kibana that cut manual log-analysis time by about 40%, and I led a team that
