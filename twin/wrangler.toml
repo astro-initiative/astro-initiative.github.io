@@ -21,8 +21,8 @@ new_sqlite_classes = ["AnthropicRelay"]
 
 # Model overrides (optional — code defaults to Haiku / Sonnet if unset).
 [vars]
-TWIN_MODEL_DEFAULT = "claude-haiku-4-5"
-TWIN_MODEL_ESCALATE = "claude-sonnet-4-6"
+TWIN_MODEL_DEFAULT = "claude-haiku-5-5"
+TWIN_MODEL_ESCALATE = "claude-haiku-5-5"
 
 # Per-IP rate limiting via Workers KV.
 [[kv_namespaces]]

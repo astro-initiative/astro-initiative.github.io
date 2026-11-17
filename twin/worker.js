@@ -16,8 +16,8 @@ const ANTHROPIC_VERSION = "2023-06-01";
 
 // Models. Haiku is the cheap default; we escalate to Sonnet for longer or
 // "deeper" questions. Both are overridable via wrangler.toml [vars].
-const DEFAULT_MODEL = "claude-haiku-4-5";
-const ESCALATE_MODEL = "claude-sonnet-4-6";
+const DEFAULT_MODEL = "claude-haiku-5-5";
+const ESCALATE_MODEL = "claude-haiku-5-5";
 
 const MAX_OUTPUT_TOKENS = 800;
 const MAX_MSG_CHARS = 1500; // reject any single message longer than this
